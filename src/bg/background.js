@@ -1,3 +1,5 @@
+var thirdParty = ['test'];
+
 chrome.webRequest.onBeforeRequest.addListener(function(details) {
     chrome.tabs.query({ 'active': true, 'lastFocusedWindow': true }, function(tabs) {
         // console.log(tabs[0]);
@@ -33,3 +35,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 chrome.runtime.onInstalled.addListener(function() {
 
 });
+
+function getThridParty() {
+    return thirdParty;
+}
