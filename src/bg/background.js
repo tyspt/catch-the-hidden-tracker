@@ -1,24 +1,35 @@
 chrome.webRequest.onBeforeRequest.addListener(function(details) {
+    chrome.tabs.query({ 'active': true, 'lastFocusedWindow': true }, function(tabs) {
+        // console.log(tabs[0]);
+
+        let baseUrl = tabs[0].url;
+        let url = details.url;
+
+        console.log("requestURL --> " + details.url);
+        console.log("siteUrl: -> " + baseUrl);
 
 
-    console.log("requestURL --> " + details.url);
-
-    let url = details.url;
-    let baseUrl = window.location.href;
-
-
-    console.log("siteUrl: -> " + baseUrl);
 
 
 
 
+
+
+    });
     return { cancel: false };
 }, { urls: ["<all_urls>"] }, ["blocking"]);
 
 
-//example of using a message handler from the inject scripts
-chrome.extension.onMessage.addListener(
-    function(request, sender, sendResponse) {
-        chrome.pageAction.show(sender.tab.id);
-        sendResponse();
+(function setup() {
+    $.ajax({
+        url: "../../easylist.txt",
+        success: function(data) {
+
+        }
     });
+}());
+
+//loads the app filter list data 
+chrome.runtime.onInstalled.addListener(function() {
+
+});
