@@ -1,8 +1,19 @@
-// if you checked "fancy-settings" in extensionizr.com, uncomment this lines
+chrome.webRequest.onBeforeRequest.addListener(function(details) {
 
-// var settings = new Store("settings", {
-//     "sample_setting": "This is how you use Store.js to remember values"
-// });
+
+    console.log("requestURL --> " + details.url);
+
+    let url = details.url;
+    let baseUrl = window.location.href;
+
+
+    console.log("siteUrl: -> " + baseUrl);
+
+
+
+
+    return { cancel: false };
+}, { urls: ["<all_urls>"] }, ["blocking"]);
 
 
 //example of using a message handler from the inject scripts

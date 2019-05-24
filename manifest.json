@@ -5,9 +5,9 @@
     "description": "This is an extension created during Hackaburg 2019 for Data Privacy Tracker",
     "homepage_url": "https://github.com/tyspt/catch-the-hidden-tracker/",
     "icons": {
-        "16": "icons/icon16.png",
-        "48": "icons/icon48.png",
-        "128": "icons/icon128.png"
+        "16": "icons/grau16.png",
+        "48": "icons/grau48.png",
+        "128": "icons/grau128.png"
     },
     "default_locale": "en",
     "background": {
@@ -22,12 +22,16 @@
         "default_popup": "src/page_action/page_action.html"
     },
     "permissions": [
+        "tabs",
         "cookies",
         "http://*/*",
-        "https://*/*"
+        "https://*/*",
+        "webRequest",
+        "webRequestBlocking"
     ],
     "content_scripts": [{
             "matches": [
+                "http://*/*",
                 "https://*/*"
             ],
             "css": [
@@ -36,6 +40,7 @@
         },
         {
             "matches": [
+                "http://*/*",
                 "https://*/*"
             ],
             "js": [
