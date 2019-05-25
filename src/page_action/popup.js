@@ -13,13 +13,51 @@ chrome.runtime.getBackgroundPage((window) => {
                 switch (category) {
                     case 'Mouse':
                     case 'Analytics':
-                        $("#threats-content").append('<li class="list-group-item list-group-item-danger"><div class="float-left">' + key + '</div><div class="float-right">' + category + '</div></li>');
+                        $("#threats-content").append('<li class="list-group-item list-group-item-danger"><div class="float-left"><img src="../../icons/_ionicons_svg_md-remove-circle-outline.svg" class="block-icon" id="' + key + '"><span>' + key + '</span></div><div class="float-right">' + category + '</div></li>');
                         break;
                     default:
-                        $("#threats-content").append('<li class="list-group-item list-group-item-warning"><div class="float-left">' + key + '</div><div class="float-right">' + category + '</div></li>');
+                        $("#threats-content").append('<li class="list-group-item list-group-item-warning"><div class="float-left"><img src="../../icons/_ionicons_svg_md-remove-circle-outline.svg" class="block-icon" id="' + key + '"><span>' + key + '</span></div><div class="float-right">' + category + '</div></li>');
                         break;
                 }
             })
         }
+        // alert("inside backgroundPage load");
+        // console.log($(".block-icon"));
+
+        // let arr = document.querySelector(".block-icon");
+
+        // console.log("queryselector-->" + arr.toStirng());
+
+        // for (let i = 0; i < arr.length; i++) {
+        //     console.log("inside:" + arr[i]);
+        // }
+
+
+        // arr.forEach(function(element) {
+        //     element.addEventListener("click", function() {
+        //         alert("register listener");
+        //     })
+        // });
+
+        // addEventListener("click", displayDate);
+
+
+
+        // $(".block-icon").on('click', function(event) {
+        //     alert("add listeners");
+        //     const icon = event.target;
+        //     console.log(icon.id);
+
+        //     const listItem = $(icon).parent().parent();
+
+        //     $(listItem).toggleClass("list-group-item-secondary");
+        //     $(listItem).toggleClass("list-group-item-danger");
+        // });
     });
 })
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // alert("document ready: " + $(".block-icon"));
+
+});

@@ -1,6 +1,7 @@
 <!doctype html>
 
 <head>
+    <meta charset="UTF-8">
     <style type="text/css">
         #mainPopup {
             padding: 20px;
@@ -17,6 +18,17 @@
             padding-right: 20px;
             padding-bottom: 10px;
         }
+        
+        .block-icon {
+            height: 20px;
+            opacity: 0.5;
+            margin-right: 10px;
+        }
+        
+        .block-icon:hover {
+            transform: rotate(180deg);
+            transition: transform 1s;
+        }
     </style>
     <link href="../../css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
 </head>
@@ -24,9 +36,12 @@
 <body>
     <div id="mainPopup">
         <div class="container">
-            <h3 id="title" class="text-center">Analyse Result</h3>
+            <h4 id="title" class="text-center">Analyse Result</h4>
 
             <ul id="threats-content" class="list-group">
+
+
+
 
             </ul>
         </div>
