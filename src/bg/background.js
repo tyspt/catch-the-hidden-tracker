@@ -9,48 +9,66 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
         let baseUrl = tabs[0].url.toLowerCase().split("://")[1];
 
         urlEachSite = appMap.get(baseUrl);
-        if (!urlEachSite) {
-            urlEachSite = new Map();
-            appMap.set(baseUrl, urlEachSite);
-        }
 
-        if (baseUrl.includes("/")) {
-            baseUrl = baseUrl.split("/")[0];
-        }
+        if (baseUrl !== "newtab/") {
+            if (!urlEachSite) {
+                urlEachSite = new Map();
+                appMap.set(baseUrl, urlEachSite);
+            }
 
-        let url = details.url.toLowerCase().split("://")[1];
-        if (url.includes("/")) {
-            url = url.split("/")[0];
-        }
+            if (baseUrl.includes("/")) {
+                baseUrl = baseUrl.split("/")[0];
+            }
 
-        var category = 'Misc'
-        if (url.includes("mouse") || url.includes("click")) {
-            category = 'Mouse';
-        } else if (url.includes("track") || url.includes("trc")) {
-            category = 'Tracker';
-        } else if (url.includes("analytics")) {
-            category = 'Analytics';
-        } else if (url.includes("ad")) {
-            category = 'Ads';
-        } else if (url.includes("chat") || url.includes("facebook") || url.includes("twitter")) {
-            category = 'Social Media';
-        }
+            let url = details.url.toLowerCase().split("://")[1];
+            if (url.includes("/")) {
+                url = url.split("/")[0];
+            }
 
-        url = extractDomain(url);
+            var category = 'Misc'
+            if (url.includes("mouse") || url.includes("click")) {
+                category = 'Mouse';
+            } else if (url.includes("track") || url.includes("trc")) {
+                category = 'Tracker';
+            } else if (url.includes("analytics")) {
+                category = 'Analytics';
+            } else if (url.includes("ad")) {
+                category = 'Ads';
+            } else if (url.includes("chat") || url.includes("facebook") || url.includes("twitter")) {
+                category = 'Social Media';
+            }
 
-        // console.log("requested url: " + url);
+            url = extractDomain(url);
 
-        if (!urlEachSite.get(url)) {
-            if (blacklist.get(url)) {
-                // console.log("======================== blacklist ======================: " + url);
-                urlEachSite.set(url, category); //TODO: set category
+            // console.log("requested url: " + url);
+
+            if (!urlEachSite.get(url)) {
+                if (blacklist.get(url)) {
+                    // console.log("======================== blacklist ======================: " + url);
+
+                    urlEachSite.set(url, category);
+
+                    updateAppIcon(urlEachSite);
+
+                    // console.log(urlEachSite);
+                }
             }
         }
-
-        // console.log(urlEachSite);
     });
     return { cancel: false };
 }, { urls: ["<all_urls>"] }, ["blocking"]);
+
+
+
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+    refreshIconOnTabEvenets();
+});
+
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    refreshIconOnTabEvenets();
+});
+
 
 
 (function setup() {
@@ -75,10 +93,6 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 
 })();
 
-//loads the app filter list data 
-chrome.runtime.onInstalled.addListener(function() {
-
-});
 
 function getTrackers() {
     return appMap;
@@ -93,4 +107,29 @@ function extractDomain(url) {
         }
     };
     return url;
+}
+
+
+function refreshIconOnTabEvenets() {
+    chrome.tabs.query({ 'active': true, 'lastFocusedWindow': true }, function(tabs) {
+        const siteURl = tabs[0].url.split("://")[1]
+        const urlMapOfSiteToGive = appMap.get(siteURl);
+
+        // alert(urlMapOfSiteToGive);
+
+        updateAppIcon(urlMapOfSiteToGive);
+
+        // alert(activeInfo.tabId);
+    });
+}
+
+
+function updateAppIcon(urlMapOfSite) {
+    if (!urlMapOfSite || urlMapOfSite.size < 1) {
+        chrome.browserAction.setIcon({ path: "../../icons/gruen128.png" });
+    } else if (urlMapOfSite.size <= 3) {
+        chrome.browserAction.setIcon({ path: "../../icons/gelb128.png" });
+    } else {
+        chrome.browserAction.setIcon({ path: "../../icons/red128.png" });
+    }
 }
