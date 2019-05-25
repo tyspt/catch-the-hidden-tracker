@@ -1,5 +1,3 @@
-var thirdParty = ['test'];
-
 var blacklist = new Map();
 var appMap; // contains the bad Urls maps for each site
 var urlEachSite = new Map(); //contains bad url for one specific site
@@ -20,7 +18,6 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
             baseUrl = baseUrl.split("/")[0];
         }
 
-
         let url = details.url.split("://")[1];
         if (url.includes("/")) {
             url = url.split("/")[0];
@@ -28,16 +25,12 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 
         url = extractDomain(url);
 
-        console.log("requested url: " + url);
+        // console.log("requested url: " + url);
 
         if (!urlEachSite.get(url)) {
             if (blacklist.get(url)) {
-                console.log("======================== blacklist ======================: " + url);
+                // console.log("======================== blacklist ======================: " + url);
                 urlEachSite.set(url, 'category'); //TODO: set category
-            } else {
-                if (!url.includes(baseUrl)) {
-                    // console.log(url);
-                }
             }
         }
 
@@ -76,10 +69,6 @@ chrome.runtime.onInstalled.addListener(function() {
 
 function getTrackers() {
     return appMap;
-}
-
-function getThridParty() {
-    return thirdParty;
 }
 
 

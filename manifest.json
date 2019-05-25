@@ -19,7 +19,7 @@
     },
     "browser_action": {
         "default_icon": "icons/grau19.png",
-        "default_title": "Popup Page",
+        "default_title": "Catch the Hidden Tracker",
         "default_popup": "src/page_action/page_action.html"
     },
     "permissions": [
