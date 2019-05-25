@@ -8,7 +8,10 @@ chrome.runtime.getBackgroundPage((window) => {
         if (badUrlMap) {
             badUrlMap.forEach(function(value, key, map) {
                 // console.log(value, key);
-                $("#threats-content").append('<div class="row">' + key + '</div>');
+                $("#threats-content").append('<ul id="threats-content" class="list-group"><li class="list-group-item"><div class="float-left">' + key + '</div><div class="float-right">' + value + '</div></li></ul>');
+
+
+
             })
         }
     });

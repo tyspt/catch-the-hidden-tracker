@@ -6,7 +6,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
     chrome.tabs.query({ 'active': true, 'lastFocusedWindow': true }, function(tabs) {
         // console.log(tabs[0]);
 
-        let baseUrl = tabs[0].url.split("://")[1];
+        let baseUrl = tabs[0].url.toLowerCase().split("://")[1];
 
         urlEachSite = appMap.get(baseUrl);
         if (!urlEachSite) {
@@ -18,9 +18,22 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
             baseUrl = baseUrl.split("/")[0];
         }
 
-        let url = details.url.split("://")[1];
+        let url = details.url.toLowerCase().split("://")[1];
         if (url.includes("/")) {
             url = url.split("/")[0];
+        }
+
+        var category = 'Misc'
+        if (url.includes("mouse") || url.includes("click")) {
+            category = 'Mouse';
+        } else if (url.includes("track") || url.includes("trc")) {
+            category = 'Tracker';
+        } else if (url.includes("analytics")) {
+            category = 'Analytics';
+        } else if (url.includes("ad")) {
+            category = 'Ads';
+        } else if (url.includes("chat") || url.includes("facebook") || url.includes("twitter")) {
+            category = 'Social Media';
         }
 
         url = extractDomain(url);
@@ -30,7 +43,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
         if (!urlEachSite.get(url)) {
             if (blacklist.get(url)) {
                 // console.log("======================== blacklist ======================: " + url);
-                urlEachSite.set(url, 'category'); //TODO: set category
+                urlEachSite.set(url, category); //TODO: set category
             }
         }
 
@@ -53,7 +66,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
                 return i.charAt(0) === '0';
             });
             for (var i = 0; i < split.length; i++) {
-                let urlToSave = extractDomain(split[i].split("0.0.0.0 ")[1].split(" ")[0].trim());
+                let urlToSave = extractDomain(split[i].split("0.0.0.0 ")[1].split(" ")[0].trim().toLowerCase());
 
                 blacklist.set(urlToSave, true);
             }
