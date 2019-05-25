@@ -23,3 +23,14 @@ chrome.runtime.getBackgroundPage((window) => {
         }
     });
 })
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    $(".block-icon").on('click', function(event) {
+        const element = event.target;
+        console.log(element.id);
+
+
+        $(element).toggleClass("list-group-item-secondary").toggleClass("list-group-item-danger");
+    });
+});
