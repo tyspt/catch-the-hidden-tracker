@@ -12,12 +12,13 @@
     "default_locale": "en",
     "background": {
         "scripts": [
+            "js/jquery/jquery.min.js",
             "src/bg/background.js"
         ],
         "persistent": true
     },
-    "page_action": {
-        "default_icon": "icons/icon19.png",
+    "browser_action": {
+        "default_icon": "icons/grau19.png",
         "default_title": "Popup Page",
         "default_popup": "src/page_action/page_action.html"
     },
