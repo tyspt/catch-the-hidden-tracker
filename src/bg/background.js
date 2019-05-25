@@ -1,10 +1,32 @@
-var blacklist = new Map();
+var blacklist = new Map(); //a sophiscated list which contains all current blocked urls from internet
 var appMap; // contains the bad Urls maps for each site
 var urlEachSite = new Map(); //contains bad url for one specific site
 
+
+/* initializing of app */
+(function setup() {
+    appMap = new Map();
+    $.ajax({
+        url: "http://winhelp2002.mvps.org/hosts.txt",
+        success: function(data) {
+            var list = data;
+            var split = list.split("\n");
+            split = split.filter(i => {
+                return i.charAt(0) === '0';
+            });
+            for (var i = 0; i < split.length; i++) {
+                let urlToSave = extractDomain(split[i].split("0.0.0.0 ")[1].split(" ")[0].trim().toLowerCase());
+
+                blacklist.set(urlToSave, true);
+            }
+        }
+    })
+
+})();
+
+/* fires everytime when the page sends out a new request */
 chrome.webRequest.onBeforeRequest.addListener(function(details) {
     chrome.tabs.query({ 'active': true, 'lastFocusedWindow': true }, function(tabs) {
-        // console.log(tabs[0]);
 
         let baseUrl = tabs[0].url.toLowerCase().split("://")[1];
 
@@ -40,17 +62,12 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 
             url = extractDomain(url);
 
-            // console.log("requested url: " + url);
-
             if (!urlEachSite.get(url)) {
                 if (blacklist.get(url)) {
-                    // console.log("======================== blacklist ======================: " + url);
 
                     urlEachSite.set(url, category);
 
                     updateAppIcon(urlEachSite);
-
-                    // console.log(urlEachSite);
                 }
             }
         }
@@ -59,45 +76,20 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
 }, { urls: ["<all_urls>"] }, ["blocking"]);
 
 
-
+/* update icons on tab change */
 chrome.tabs.onActivated.addListener(function(activeInfo) {
     refreshIconOnTabEvenets();
 });
 
-
+/* update icons on page forwarding */
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     refreshIconOnTabEvenets();
 });
 
 
-
-(function setup() {
-    appMap = new Map();
-    $.ajax({
-        url: "http://winhelp2002.mvps.org/hosts.txt",
-        success: function(data) {
-            var list = data;
-
-            // var c = 0;
-            var split = list.split("\n");
-            split = split.filter(i => {
-                return i.charAt(0) === '0';
-            });
-            for (var i = 0; i < split.length; i++) {
-                let urlToSave = extractDomain(split[i].split("0.0.0.0 ")[1].split(" ")[0].trim().toLowerCase());
-
-                blacklist.set(urlToSave, true);
-            }
-        }
-    })
-
-})();
-
-
 function getTrackers() {
     return appMap;
 }
-
 
 function extractDomain(url) {
     if (url.split(".").length > 2) {
@@ -115,11 +107,7 @@ function refreshIconOnTabEvenets() {
         const siteURl = tabs[0].url.split("://")[1]
         const urlMapOfSiteToGive = appMap.get(siteURl);
 
-        // alert(urlMapOfSiteToGive);
-
         updateAppIcon(urlMapOfSiteToGive);
-
-        // alert(activeInfo.tabId);
     });
 }
 

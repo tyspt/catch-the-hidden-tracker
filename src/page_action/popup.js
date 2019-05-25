@@ -7,6 +7,7 @@ chrome.runtime.getBackgroundPage((window) => {
 
         $('<div id="total" class="text-right">Trackers found: ' + badUrlMap.size + '</div>').insertAfter("#title");
 
+        // insert each url to the list in popup window
         if (badUrlMap) {
             badUrlMap.forEach(function(category, key, map) {
                 switch (category) {
