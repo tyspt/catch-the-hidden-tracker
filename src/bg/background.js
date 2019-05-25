@@ -1,7 +1,8 @@
-var blacklist = new Map(); //a sophiscated list which contains all current blocked urls from internet
+var blacklist = new Map(); //a sophiscated list which contains all current blacklisted urls from internet
 var appMap; // contains the bad Urls maps for each site
 var urlEachSite = new Map(); //contains bad url for one specific site
 
+var blocklist = new Map(); //a list(acurally map) that stores which urls actually to block, as standard it's empty until user choose to block
 
 /* initializing of app */
 (function setup() {
@@ -16,16 +17,24 @@ var urlEachSite = new Map(); //contains bad url for one specific site
             });
             for (var i = 0; i < split.length; i++) {
                 let urlToSave = extractDomain(split[i].split("0.0.0.0 ")[1].split(" ")[0].trim().toLowerCase());
-
                 blacklist.set(urlToSave, true);
             }
         }
     })
-
 })();
+
+
 
 /* fires everytime when the page sends out a new request */
 chrome.webRequest.onBeforeRequest.addListener(function(details) {
+    var url = details.url.toLowerCase().split("://")[1];
+
+    if (url.includes("/")) {
+        url = url.split("/")[0];
+    }
+
+    url = extractDomain(url);
+
     chrome.tabs.query({ 'active': true, 'lastFocusedWindow': true }, function(tabs) {
 
         let baseUrl = tabs[0].url.toLowerCase().split("://")[1];
@@ -42,11 +51,6 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
                 baseUrl = baseUrl.split("/")[0];
             }
 
-            let url = details.url.toLowerCase().split("://")[1];
-            if (url.includes("/")) {
-                url = url.split("/")[0];
-            }
-
             var category = 'Misc'
             if (url.includes("mouse") || url.includes("click")) {
                 category = 'Mouse';
@@ -60,7 +64,6 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
                 category = 'Social Media';
             }
 
-            url = extractDomain(url);
 
             if (!urlEachSite.get(url)) {
                 if (blacklist.get(url)) {
@@ -72,7 +75,9 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
             }
         }
     });
-    return { cancel: false };
+
+    // console.log(url + " " + ((blocklist.get(url)) ? true : false));
+    return { cancel: ((blocklist.get(url)) ? true : false) };
 }, { urls: ["<all_urls>"] }, ["blocking"]);
 
 
@@ -86,6 +91,17 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     refreshIconOnTabEvenets();
 });
 
+function addToBlockList(url) {
+    blocklist.set(url, true);
+}
+
+function removeFromBlockList(url) {
+    blocklist.delete(url);
+}
+
+function isInBlocklist(url) {
+    return ((blocklist.get(url)) ? true : false);
+}
 
 function getTrackers() {
     return appMap;

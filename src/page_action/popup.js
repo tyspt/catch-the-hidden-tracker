@@ -13,33 +13,45 @@ chrome.runtime.getBackgroundPage((window) => {
                 switch (category) {
                     case 'Mouse':
                     case 'Analytics':
-                        $("#threats-content").append('<li class="list-group-item list-group-item-danger"><div class="float-left"><img src="../../icons/_ionicons_svg_md-remove-circle-outline.svg" class="block-icon-danger" id="' + key + '"><span>' + key + '</span></div><div class="float-right">' + category + '</div></li>');
+                        $("#threats-content").append(listModel('danger', key, category));
                         break;
                     default:
-                        $("#threats-content").append('<li class="list-group-item list-group-item-warning"><div class="float-left"><img src="../../icons/_ionicons_svg_md-remove-circle-outline.svg" class="block-icon-warning" id="' + key + '"><span>' + key + '</span></div><div class="float-right">' + category + '</div></li>');
+                        $("#threats-content").append(listModel('warning', key, category));
                         break;
                 }
             })
         }
 
+        function listModel(bootstrapclass, key, category) {
+            var blockstatus = window.isInBlocklist(key);
+            return '<li class="list-group-item list-group-item-' + (blockstatus ? 'secondary' : bootstrapclass) + '" data-category="' + category + '"><div class="float-left"><img src="../../icons/_ionicons_svg_md-remove-circle-outline.svg" class="block-icon block-icon-warning" id="' + key + '"><span>' + key + '</span></div><div class="float-right">' + category + '</div></li>';
+        }
 
-        $(document).on('click', '.block-icon-warning', function(event) {
+
+        $(document).on('click', '.list-group-item', function(event) {
             const icon = event.target;
+            if ($(icon).hasClass("block-icon")) {
+                const listItem = $(icon).parent().parent();
+                const category = listItem.attr("data-category");
 
-            const listItem = $(icon).parent().parent();
+                if ($(listItem).hasClass("list-group-item-secondary")) {
+                    window.removeFromBlockList(icon.id);
+                } else {
+                    window.addToBlockList(icon.id);
+                }
 
-            $(listItem).toggleClass("list-group-item-secondary");
-            $(listItem).toggleClass("list-group-item-warning");
-        })
+                $(listItem).toggleClass("list-group-item-secondary");
 
-        $(document).on('click', '.block-icon-danger', function(event) {
-            const icon = event.target;
-            console.log(icon.id);
-
-            const listItem = $(icon).parent().parent();
-
-            $(listItem).toggleClass("list-group-item-secondary");
-            $(listItem).toggleClass("list-group-item-danger");
+                switch (category) {
+                    case 'Mouse':
+                    case 'Analytics':
+                        $(listItem).toggleClass("list-group-item-danger");
+                        break;
+                    default:
+                        $(listItem).toggleClass("list-group-item-warning");
+                        break;
+                }
+            }
         })
     });
 })
