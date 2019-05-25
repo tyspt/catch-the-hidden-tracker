@@ -25,16 +25,23 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
         if (url.includes("/")) {
             url = url.split("/")[0];
         }
-        var domain = url.split(".");
-        url = domain[domain.length - 2] + "." + domain[domain.length - 1];
 
-        if (blacklist.get(url)) {
-            if (!urlEachSite.get(url)) {
+        url = extractDomain(url);
+
+        console.log("requested url: " + url);
+
+        if (!urlEachSite.get(url)) {
+            if (blacklist.get(url)) {
+                console.log("======================== blacklist ======================: " + url);
                 urlEachSite.set(url, 'category'); //TODO: set category
+            } else {
+                if (!url.includes(baseUrl)) {
+                    // console.log(url);
+                }
             }
         }
 
-        console.log(urlEachSite);
+        // console.log(urlEachSite);
     });
     return { cancel: false };
 }, { urls: ["<all_urls>"] }, ["blocking"]);
@@ -53,7 +60,9 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
                 return i.charAt(0) === '0';
             });
             for (var i = 0; i < split.length; i++) {
-                blacklist.set(split[i].split("0.0.0.0 ")[1].split(" ")[0].trim(), true);
+                let urlToSave = extractDomain(split[i].split("0.0.0.0 ")[1].split(" ")[0].trim());
+
+                blacklist.set(urlToSave, true);
             }
         }
     })
@@ -71,4 +80,15 @@ function getTrackers() {
 
 function getThridParty() {
     return thirdParty;
+}
+
+
+function extractDomain(url) {
+    if (url.split(".").length > 2) {
+        var domain = url.split(".");
+        if (domain[domain.length - 2].length > 2) {
+            url = domain[domain.length - 2] + "." + domain[domain.length - 1];
+        }
+    };
+    return url;
 }
