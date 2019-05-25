@@ -118,6 +118,6 @@ function updateAppIcon(urlMapOfSite) {
     } else if (urlMapOfSite.size <= 3) {
         chrome.browserAction.setIcon({ path: "../../icons/gelb128.png" });
     } else {
-        chrome.browserAction.setIcon({ path: "../../icons/red128.png" });
+        chrome.browserAction.setIcon({ path: "../../icons/rot128.png" });
     }
 }
